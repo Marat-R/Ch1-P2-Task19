@@ -2,7 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 from time import time
-# from datetime import datetime
 
 
 def get_html(url):
@@ -13,10 +12,8 @@ def get_html(url):
 def get_total_pages(html):
     soup = BeautifulSoup(html, 'html.parser')
     pages = soup.find('ul', class_='pagn').find_all('a')[-1].get('href')
-    # print(pages)
     total_pages = pages.split('=')[1]
     return int(total_pages)
-    # print(total_pages)
 
 
 def write_csv(data):
@@ -34,7 +31,6 @@ def get_page_data(html):
     goods = soup.find('div', id='main-listing-block').find_all('article', class_='listing-item')
 
     for good in goods:
-        # title, price, url, photo
                
         try:
             title = good.find('div', class_='listing-item-main').find('a').text.strip()
@@ -72,9 +68,7 @@ def main():
     part2_url = 'page='
 
     total_pages = get_total_pages(get_html(url))
-    # print(total_pages)
     
-
     for i in range(1, total_pages+1):
         url_counter = part1_url + part2_url + str(i)
         print(url_counter)
