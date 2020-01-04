@@ -12,6 +12,7 @@ def get_html(url):
 def get_total_pages(html):
     soup = BeautifulSoup(html, 'html.parser')
     pages = soup.find('ul', class_='pagn').find_all('a')[-1].get('href')
+
     total_pages = pages.split('=')[1]
     return int(total_pages)
 
@@ -21,19 +22,21 @@ def write_csv(data):
         writer = csv.writer(file_)
         writer.writerow( (data['title'],
                           data['price'],
-                          data['url'],
-                          data['photo'],) )
+                          data['photo'],
+                          data['url'],) )
 
 
 def get_page_data(html):
     soup = BeautifulSoup(html, 'html.parser')
 
-    goods = soup.find('div', id='main-listing-block').find_all('article', class_='listing-item')
+    goods = soup.find('div', id='main-listing-block').find_all(
+                            'article', class_='listing-item')
 
     for good in goods:
                
         try:
-            title = good.find('div', class_='listing-item-main').find('a').text.strip()
+            title = good.find('div', class_='listing-item-main'
+                                    ).find('a').text.strip()
         except:
             title = ''
         
@@ -43,19 +46,21 @@ def get_page_data(html):
             price = ''
 
         try:
-            url = 'https://lalafo.kg' + good.find('div', class_='listing-item-main').find('a').get('href')
-        except:
-            url = ''
-        
-        try:
-            photo = good.find('img', class_='listing-item-photo link-image').get('src')
+            photo = good.find('img', class_=
+                            'listing-item-photo link-image').get('src')
         except:
             photo = ''
 
+        try:
+            url = 'https://lalafo.kg' + good.find('div', class_=
+                            'listing-item-main').find('a').get('href')
+        except:
+            url = ''
+        
         data = {'title': title,
                 'price': price,
-                'url': url,
-                'photo': photo}
+                'photo': photo,
+                'url': url,}
 
         write_csv(data)
         
@@ -63,8 +68,12 @@ def get_page_data(html):
 def main():
     time_start = time()
     
-    url = 'https://lalafo.kg/kyrgyzstan/mobilnye-telefony-i-aksessuary/mobilnyetelefony'
-    part1_url = 'https://lalafo.kg/kyrgyzstan/mobilnye-telefony-i-aksessuary/mobilnyetelefony?'
+    url = ('https://lalafo.kg/kyrgyzstan'
+            '/mobilnye-telefony-i-aksessuary/mobilnyetelefony')
+
+    part1_url = ('https://lalafo.kg/kyrgyzstan'
+            '/mobilnye-telefony-i-aksessuary/mobilnyetelefony?')
+
     part2_url = 'page='
 
     total_pages = get_total_pages(get_html(url))
@@ -75,7 +84,7 @@ def main():
         html = get_html(url_counter)
         get_page_data(html)
     time_stop = time()
-    print("Time: " + str(round(time_stop - time_start, 2)))
+    print("Time: " + str(round(time_stop - time_start, 2)) + " seconds")
 
 
 if __name__ == '__main__':
